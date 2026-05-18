@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useHistorial } from './context/HistorialContext';
+import { useConfig } from './context/ConfigContext';
 
 function Sistema({ nombre, valor, unidad, min, max, onChange }) {
   const porcentaje = Math.round(((valor - min) / (max - min)) * 100);
@@ -33,13 +34,14 @@ function PanelSistemas() {
   const [rpm, setRpm] = useState(1800);
   const [alertas, setAlertas] = useState([]);
   const { agregarEvento } = useHistorial();
+  const { config } = useConfig();
 
   useEffect(() => {
   const nuevasAlertas = [];
 
-  if (voltaje < 11) nuevasAlertas.push('⚠ Voltaje bajo — revisar banco de baterías');
-  if (temperatura > 95) nuevasAlertas.push('🌡 Temperatura crítica — verificar sistema de enfriamiento');
-  if (rpm > 2800) nuevasAlertas.push('⚙ RPM fuera de rango — reducir carga del motor');
+  if (voltaje < config.voltajeMinimo) nuevasAlertas.push('⚠ Voltaje bajo — revisar banco de baterías');
+  if (temperatura > config.temperaturaMaxima) nuevasAlertas.push('🌡 Temperatura crítica — verificar sistema de enfriamiento');
+  if (rpm > config.rpmMaximo) nuevasAlertas.push('⚙ RPM fuera de rango — reducir carga del motor');
 
   setAlertas((prev) => {
     nuevasAlertas.forEach((alerta) => {
@@ -49,7 +51,7 @@ function PanelSistemas() {
     });
     return nuevasAlertas;
   });
-}, [voltaje, temperatura, rpm]);
+}, [voltaje, temperatura, rpm, config]);
 
   return (
   <div className="flex flex-col gap-4">
@@ -61,7 +63,7 @@ function PanelSistemas() {
         ))}
       </div>
     )}
-    <Sistema nombre="Banco de Baterías" valor={voltaje} unidad="V" min={0} max={30} onChange={setVoltaje} />
+    <Sistema nombre="Banco de Baterías" valor={voltaje} unidad="V" min={0} max={15} onChange={setVoltaje} />
     <Sistema nombre="Temperatura Motor" valor={temperatura} unidad="°C" min={60} max={110} onChange={setTemperatura} />
     <Sistema nombre="RPM Motor" valor={rpm} unidad="rpm" min={0} max={3200} onChange={setRpm} />
   </div>

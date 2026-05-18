@@ -4,19 +4,22 @@ import Dashboard from './pages/Dashboard';
 import Historial from './pages/Historial';
 import Configuracion from './pages/Configuracion';
 import { HistorialProvider } from './context/HistorialContext';
+import { ConfigProvider } from './context/ConfigContext';
 
 function App() {
   return (
-    <HistorialProvider>
-      <BrowserRouter>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/historial" element={<Historial />} />
-          <Route path="/configuracion" element={<Configuracion />} />
-        </Routes>
-      </BrowserRouter>
-    </HistorialProvider>
+    <ConfigProvider>
+      <HistorialProvider>
+        <BrowserRouter>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/historial" element={<Historial />} />
+            <Route path="/configuracion" element={<Configuracion />} />
+          </Routes>
+        </BrowserRouter>
+      </HistorialProvider>
+    </ConfigProvider>
   );
 }
 
